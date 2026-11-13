@@ -1,0 +1,109 @@
+---
+import type { SiteConfig } from '../config/types.ts';
+import ContactButton from './ContactButton.astro';
+import Icon from './Icon.astro';
+import { dayNames } from '../lib/business.ts';
+import { readableDate } from '../lib/time.ts';
+interface Props {
+  config: SiteConfig;
+}
+const { config } = Astro.props;
+const copy = config.content.contact;
+const hours = [...config.schedule.weekly].sort(
+  (a, b) => ((a.day + 6) % 7) - ((b.day + 6) % 7),
+);
+---
+
+<section
+  id="contacto"
+  class="contact section-anchor section-space"
+  aria-labelledby="contact-title"
+>
+  <div class="contact__intro reveal">
+    <p class="eyebrow">{copy.eyebrow}</p>
+    <h2 id="contact-title">
+      {copy.title}
+      <br />
+      <em>{copy.accent}</em>
+    </h2>
+    <p>{copy.description}</p>
+    <ContactButton config={config} label="Hablemos por WhatsApp" />
+    <p class="closed-note" data-closed-note hidden>
+      {config.business.closedMessage}
+    </p>
+  </div>
+  <div class="contact__info">
+    <div class="contact__location">
+      <span class="info-label">
+        <Icon name="pin" size={17} /> VISÍTANOS
+      </span>
+      <h3>{config.business.name}</h3>
+      <address>
+        {config.business.address}
+        <br />
+        {config.business.locality}, {config.business.region}
+      </address>
+      <a
+        class="quiet-link"
+        href={config.business.mapsUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Cómo llegar <Icon name="arrow" size={16} />
+      </a>
+      <a class="phone-link" href={`tel:${config.business.phone}`} data-phone>
+        <Icon name="phone" size={16} />
+        {config.business.phoneDisplay}
+      </a>
+    </div>
+    <div class="contact__hours">
+      <div class="hours-heading">
+        <span class="info-label">
+          <Icon name="clock" size={17} /> HORARIOS
+        </span>
+        <span class="business-status" data-business-status role="status">
+          Consulta el horario
+        </span>
+      </div>
+      <dl class="hours-table">
+        {hours.map((day) => (
+          <div data-hours-day={day.day}>
+            <dt>{dayNames[day.day]}</dt>
+            <dd>
+              {day.intervals.length
+                ? day.intervals
+                    .map(([start, end]) => `${start}–${end}`)
+                    .join(' / ')
+                : 'Cerrado'}
+            </dd>
+          </div>
+        ))}
+      </dl>
+      <p class="timezone-note">Hora local · {config.ownerTimeZone}</p>
+      {config.schedule.exceptions.length > 0 && (
+        <details class="special-hours">
+          <summary>
+            Fechas especiales <Icon name="plus" size={15} />
+          </summary>
+          <ul>
+            {config.schedule.exceptions.map((exception) => (
+              <li>
+                <span>
+                  {readableDate(exception.date)} · {exception.label}
+                </span>
+                <strong>
+                  {exception.intervals.length
+                    ? exception.intervals
+                        .map(([start, end]) => `${start}–${end}`)
+                        .join(' / ')
+                    : 'Cerrado'}
+                </strong>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
+      <p class="today-exception" data-today-exception hidden></p>
+    </div>
+  </div>
+</section>

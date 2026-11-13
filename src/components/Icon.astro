@@ -1,0 +1,41 @@
+---
+interface Props {
+  name:
+    | 'arrow'
+    | 'whatsapp'
+    | 'pin'
+    | 'phone'
+    | 'clock'
+    | 'scissors'
+    | 'plus'
+    | 'check';
+  size?: number;
+}
+const { name, size = 20 } = Astro.props;
+const paths = {
+  arrow: 'M7 17 17 7M7 7h10v10',
+  whatsapp:
+    'M20.5 11.8a8.4 8.4 0 0 1-12.4 7.4L3 20.5l1.3-4.9A8.4 8.4 0 1 1 20.5 11.8ZM8 7.5c.5 3.8 2.7 6 6.5 7l1.2-1.8-2.2-1-1 1c-1.6-.8-2.5-1.7-3.2-3.2l.9-1-1-2.2Z',
+  pin: 'M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0ZM14.5 10a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z',
+  phone: 'm7 3 3 5-2 2a14 14 0 0 0 6 6l2-2 5 3c-1 5-4 5-8 3S5 14 3 10 2 4 7 3Z',
+  clock: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM12 7v5l3 2',
+  scissors:
+    'M8 8 20 20M8 16 20 4M9 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z',
+  plus: 'M12 5v14M5 12h14',
+  check: 'm5 12 4 4L19 6',
+};
+---
+
+<svg
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.5"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+>
+  <path d={paths[name]} />
+</svg>

@@ -1,0 +1,124 @@
+---
+import type { SiteConfig } from '../config/types.ts';
+import ContactButton from './ContactButton.astro';
+import Icon from './Icon.astro';
+import { money } from '../lib/business.ts';
+interface Props {
+  config: SiteConfig;
+}
+const { config } = Astro.props;
+const copy = config.content.services;
+const categories = [...new Set(config.services.map((s) => s.category))];
+---
+
+<section
+  id="servicios"
+  class="services section-anchor section-space"
+  aria-labelledby="services-title"
+>
+  <div class="section-heading reveal">
+    <div>
+      <p class="eyebrow">{copy.eyebrow}</p>
+      <h2 id="services-title">
+        {copy.title}
+        <br />
+        <em>{copy.accent}</em>
+      </h2>
+    </div>
+    <p>{copy.description}</p>
+  </div>
+  {config.categoriesView === 'filters' && (
+    <div
+      class="filters"
+      role="group"
+      aria-label="Filtrar servicios por categoría"
+      data-filters
+      hidden
+    >
+      <button
+        class="filter is-active"
+        type="button"
+        aria-pressed="true"
+        data-filter="all"
+      >
+        Todos los servicios
+      </button>
+      {categories.map((category) => (
+        <button
+          class="filter"
+          type="button"
+          aria-pressed="false"
+          data-filter={category}
+        >
+          {category}
+        </button>
+      ))}
+    </div>
+  )}
+  <p class="sr-only" data-filter-status role="status"></p>
+  <div
+    class:list={[
+      'services-content',
+      `services-content--${config.servicesView}`,
+    ]}
+  >
+    {categories.map((category) => (
+      <div class="service-group" data-service-group>
+        {config.categoriesView === 'grouped' && (
+          <h3 class="category-title">{category}</h3>
+        )}
+        <div
+          class:list={[
+            'service-items',
+            `service-items--${config.servicesView}`,
+          ]}
+        >
+          {config.services
+            .filter((s) => s.category === category)
+            .map((service) => (
+              <article
+                class="service"
+                data-service={service.id}
+                data-category={category}
+              >
+                <div class="service__image">
+                  <img
+                    src={service.image}
+                    alt={service.imageAlt}
+                    width="400"
+                    height="300"
+                    loading="lazy"
+                  />
+                </div>
+                <div class="service__details">
+                  <span class="service__category">{service.category}</span>
+                  <h3>{service.name}</h3>
+                  <p>{service.description}</p>
+                  <span class="duration">
+                    <Icon name="clock" size={13} />
+                    {service.duration} min aprox.
+                  </span>
+                  <div class="service__offer" data-service-offer hidden></div>
+                </div>
+                <div class="service__price-action">
+                  <div class="service__price" data-service-price>
+                    {money(service.price)}
+                  </div>
+                  <ContactButton
+                    config={config}
+                    service={service}
+                    label="Solicitar"
+                    variant="text"
+                  />
+                </div>
+              </article>
+            ))}
+        </div>
+      </div>
+    ))}
+  </div>
+  <div class="services-note">
+    <Icon name="check" size={16} />
+    <p>{copy.note}</p>
+  </div>
+</section>

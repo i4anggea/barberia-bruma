@@ -1,0 +1,64 @@
+---
+import type { SiteConfig } from '../config/types.ts';
+import ContactButton from './ContactButton.astro';
+import Icon from './Icon.astro';
+interface Props {
+  config: SiteConfig;
+}
+const { config } = Astro.props;
+const hasServices = config.sections.some(
+  (s) => s.id === 'servicios' && s.visible,
+);
+---
+
+<section id="inicio" class="hero section-anchor" aria-labelledby="hero-title">
+  <div class="hero__copy">
+    <p class="eyebrow">
+      <span class="small-line"></span>
+      {config.hero.eyebrow}
+    </p>
+    <h1 id="hero-title">
+      {config.hero.title}
+      <br />
+      <em>{config.hero.accent}</em>
+    </h1>
+    <p class="hero__description">{config.hero.description}</p>
+    <div class="hero__actions">
+      <ContactButton config={config} />
+      {hasServices && (
+        <a class="quiet-link" href="#servicios">
+          Explorar servicios <span aria-hidden="true">↓</span>
+        </a>
+      )}
+    </div>
+    <div class="hero__footnote">
+      <span class="outlined-icon">
+        <Icon name="scissors" size={20} />
+      </span>
+      <p>
+        El cuidado está en los detalles.
+        <br />
+        <strong>El estilo, en ti.</strong>
+      </p>
+    </div>
+  </div>
+  <figure class="hero__visual">
+    <img
+      class="hero__image"
+      src={config.hero.image}
+      alt={config.hero.imageAlt}
+      width="1536"
+      height="1024"
+      fetchpriority="high"
+    />
+    <div class="hero__stamp" aria-hidden="true">
+      <span>HECHO CON</span>
+      <Icon name="scissors" size={30} />
+      <span>OFICIO Y CALMA</span>
+    </div>
+    <figcaption>
+      <span>{config.hero.imageNote}</span>
+      <span class="hero__coordinate">{config.business.locality}</span>
+    </figcaption>
+  </figure>
+</section>

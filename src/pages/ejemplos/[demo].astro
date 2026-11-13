@@ -1,0 +1,10 @@
+---
+import Site from '../../components/Site.astro';
+import { olivo } from '../../config/examples/olivo.ts';
+import { site } from '../../config/site.ts';
+export function getStaticPaths() {
+  return site.demo ? [{ params: { demo: 'olivo' } }] : [];
+}
+---
+
+<Site config={olivo} />

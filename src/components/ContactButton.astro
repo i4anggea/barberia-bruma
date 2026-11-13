@@ -1,0 +1,42 @@
+---
+import type { SiteConfig, Service, Promotion } from '../config/types.ts';
+import { contactLink } from '../lib/business.ts';
+import Icon from './Icon.astro';
+interface Props {
+  config: SiteConfig;
+  service?: Service;
+  promotion?: Promotion;
+  label?: string;
+  variant?: 'primary' | 'outline' | 'text';
+  class?: string;
+}
+const {
+  config,
+  service,
+  promotion,
+  label = 'Solicitar cita',
+  variant = 'primary',
+  class: extra = '',
+} = Astro.props;
+---
+
+<a
+  href={contactLink(config, service, promotion)}
+  class:list={['button', `button--${variant}`, extra]}
+  data-contact
+  data-service-id={service?.id}
+  data-promotion-id={promotion?.id}
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-haspopup={config.demo ? 'dialog' : undefined}
+  aria-label={
+    promotion
+      ? `${label}: ${promotion.name}`
+      : service
+        ? `${label}: ${service.name}`
+        : label
+  }
+>
+  <span>{label}</span>
+  <Icon name="arrow" size={18} />
+</a>

@@ -1,0 +1,89 @@
+---
+import type { SiteConfig } from '../config/types.ts';
+import ContactButton from './ContactButton.astro';
+import {
+  money,
+  promotionPrice,
+  promotionPeriod,
+  discountLabel,
+} from '../lib/business.ts';
+interface Props {
+  config: SiteConfig;
+}
+const { config } = Astro.props;
+const copy = config.content.promotions;
+---
+
+<section
+  id="promociones"
+  class="promotions section-anchor section-space"
+  aria-labelledby="promotions-title"
+>
+  <div class="section-heading reveal">
+    <div>
+      <p class="eyebrow">{copy.eyebrow}</p>
+      <h2 id="promotions-title">
+        {copy.title}
+        <br />
+        <em>{copy.accent}</em>
+      </h2>
+    </div>
+    <p>{copy.description}</p>
+  </div>
+  <p class="promotion-empty" data-promotion-empty hidden>
+    {copy.empty}
+  </p>
+  <p class="time-fallback" data-time-fallback>
+    Consulta por WhatsApp las promociones vigentes. Activa JavaScript para ver
+    sus fechas actualizadas.
+  </p>
+  <div class="promotion-grid">
+    {config.promotions.map((promotion, index) => {
+      const pricing = promotionPrice(promotion, config.services);
+      return (
+        <article
+          class:list={['promotion', { 'promotion--featured': index === 0 }]}
+          data-promotion={promotion.id}
+          hidden
+        >
+          <div class="promotion__image">
+            <img
+              src={promotion.image}
+              alt={promotion.imageAlt}
+              width="720"
+              height="480"
+              loading="lazy"
+            />
+            <span class="promotion__badge">
+              {discountLabel(promotion, config.services)} DE AHORRO
+            </span>
+          </div>
+          <div class="promotion__body">
+            <p class="eyebrow">
+              {promotion.kind === 'bundle'
+                ? 'EL DÚO PERFECTO'
+                : 'UN PRECIO ESPECIAL'}
+            </p>
+            <h3>{promotion.name}</h3>
+            <p>{promotion.description}</p>
+            <div class="promotion__pricing">
+              <del>{money(pricing.original)}</del>
+              <strong>{money(pricing.price)}</strong>
+              <span>MXN{promotion.kind === 'bundle' ? ' / paquete' : ''}</span>
+            </div>
+            <ContactButton
+              config={config}
+              promotion={promotion}
+              label="Quiero esta promoción"
+              variant={index === 0 ? 'primary' : 'outline'}
+            />
+            <p class="promotion__dates">
+              {promotionPeriod(promotion)} · {config.ownerTimeZone}
+            </p>
+            <p class="promotion__conditions">{promotion.conditions}</p>
+          </div>
+        </article>
+      );
+    })}
+  </div>
+</section>
